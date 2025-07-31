@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
@@ -44,17 +43,13 @@ static bool quit_window = false;
 
 direction_e last_dir = DIR_RIGHT;
 
-const vec2_t HEAD_COORD_INIT = {4 * GRID_SIZE, 0};
+static const vec2_t HEAD_COORD_INIT = {4 * GRID_SIZE, 0};
 
-vec2_t head_coord = HEAD_COORD_INIT;
-vec2_t last_head_coord;
+static vec2_t head_coord;
+static vec2_t last_head_coord;
 /* vec2_t tail_coords[32 * 32 - 1] = {0}; */
 
-vec2_t tail_coords[32 * 32 - 1] = {
-  {HEAD_COORD_INIT.x - -1 * GRID_SIZE, HEAD_COORD_INIT.y},
-  {HEAD_COORD_INIT.x - 0 * GRID_SIZE, HEAD_COORD_INIT.y},
-  {HEAD_COORD_INIT.x - 1 * GRID_SIZE, HEAD_COORD_INIT.y},
-};
+static vec2_t tail_coords[32 * 32 - 1];
 
 static uint16_t delay_duration_ms = 400;
 
@@ -75,6 +70,13 @@ void update_input(vec2_t *rect);
 // ..........x
 //        ---x
 //
+
+void on_game_init(void) {
+  head_coord = HEAD_COORD_INIT;
+  // tail_coords[0] = (vec2_t){HEAD_COORD_INIT.x + 1 * GRID_SIZE, HEAD_COORD_INIT.y};
+  // tail_coords[1] = (vec2_t){HEAD_COORD_INIT.x - 0 * GRID_SIZE, HEAD_COORD_INIT.y};
+  // tail_coords[2] = (vec2_t){HEAD_COORD_INIT.x - 1 * GRID_SIZE, HEAD_COORD_INIT.y};
+}
 
 void tail_draw() {
   for (size_t i = 0; i < tail_count; i++) {
@@ -114,6 +116,7 @@ void tail_update() {
 
 
 int main(void) {
+  on_game_init();
 	if (SDL_Init( SDL_INIT_VIDEO ) < 0)	{
 		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
 	}
@@ -178,7 +181,7 @@ int main(void) {
 
     SDL_UpdateWindowSurface( window );
     SDL_Delay(delay_duration_ms);
-    delay_duration_ms -= 20;
+    // delay_duration_ms -= 20;
   }
 
   /// end
